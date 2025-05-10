@@ -2,6 +2,7 @@ class State:
     
     board_h = 5 #height of the board
     board_w = 5 #width of the board
+    empty = ' ' #character that represents empty space
 
     def __init__(self, matrix):
         self.board = matrix
@@ -137,15 +138,26 @@ class State:
                     count = count + 1
 
         return count
+    
+    #returns a list of collumns where it would be legal to place a piece
+    def legal_actions(self):
+        moves = []
+        for j in range(self.board_w):
+            if self.board[0][j] == self.empty:
+                moves.append(j)
+        return moves
+    
+    #returns a new state with a piece placed in that column, or None if the action is invalid
+    def action(self, col, player_char):
+        if self.board[0][col] != self.empty:
+            return None
+        row = 1
+        for row in range(1,self.board_h):
+            if self.board[row][col] != self.empty:
+                row = row - 1
+                break
 
-                    
-            
+        new_board = list(map(list, self.board))
+        new_board[row][col] = player_char
 
-
-
-
-
-
-
-
-
+        return State(new_board)
