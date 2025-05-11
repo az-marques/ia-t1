@@ -170,7 +170,7 @@ class State:
 
         return State(new_board, not self.to_move)
 
-    #returns None if state isn't terminal. If it is terminal, returns 1 if p1 wins, -1 if p2 wins, and 0 if its a tie
+    #returns None if state isn't terminal. If it is terminal, returns 1 if p1 wins, 2 if p2 wins, and 3 if its a tie
     def is_terminal(self):
         
         if (self.longest_h_line(self.p1_char) >= 4 or
@@ -183,10 +183,10 @@ class State:
             self.longest_v_line(self.p2_char) >= 4 or
             self.longest_d_up_line(self.p2_char) >= 4 or
             self.longest_d_down_line(self.p2_char) >=4):
-            return -1
+            return 2
         
         #no legal moves left (board full), tie
-        if not self.legal_moves():
-            return 0
+        if self.legal_moves() == []:
+            return 3
         
         return None
