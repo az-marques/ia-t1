@@ -1,16 +1,18 @@
 class State:
     
-    board_h = 5 #height of the board
-    board_w = 5 #width of the board
-    empty = ' ' #character that represents empty space
+    __board_h = 5 #height of the board
+    __board_w = 5 #width of the board
+    __empty = ' ' #character that represents __empty space
+    __p1_char = 'X' #character that represents a piece by player 1
+    __p2_char = 'O' #character that represents a piece by player 1
 
     def __init__(self, matrix):
         self.board = matrix
 
     def print_board(self):
-        for i in range(self.board_h):
+        for i in range(self.__board_h):
             print('|', end=' ')
-            for j in range(self.board_w):
+            for j in range(self.__board_w):
                 print(self.board[i][j], end=" ")
             print('|')
 
@@ -18,10 +20,10 @@ class State:
     def longest_h_line(self, player_char):
         longest_line_lenght = 0
        
-        for i in range(self.board_h):
+        for i in range(self.__board_h):
             line_length = 0
             
-            for j in range(self.board_w):
+            for j in range(self.__board_w):
                 #if it's that player's piece, line gets bigger
                 if self.board[i][j] == player_char:
                     line_length = line_length + 1
@@ -37,10 +39,10 @@ class State:
     def longest_v_line(self, player_char):
         longest_line_lenght = 0
        
-        for j in range(self.board_w):
+        for j in range(self.__board_w):
             line_length = 0
             
-            for i in range(self.board_h):
+            for i in range(self.__board_h):
                 #if it's that player's piece, line gets bigger
                 if self.board[i][j] == player_char:
                     line_length = line_length + 1
@@ -57,12 +59,12 @@ class State:
         longest_line_lenght = 0
 
         #diagonals starting from the leftmost collumn
-        for row in range(self.board_h):
+        for row in range(self.__board_h):
             i = row
             j = 0
             line_length = 0
 
-            while (i >= 0 and j < self.board_w):
+            while (i >= 0 and j < self.__board_w):
                 if self.board[i][j] == player_char: #if it's that player's piece, line gets bigger
                     line_length = line_length + 1
                     if line_length > longest_line_lenght:
@@ -73,12 +75,12 @@ class State:
                 j = j+1
 
         #diagonals starting from the bottom row
-        for col in range(1,self.board_w):
-            i = self.board_h-1
+        for col in range(1,self.__board_w):
+            i = self.__board_h-1
             j = col
             line_length = 0
 
-            while (i >= 0 and j < self.board_w):
+            while (i >= 0 and j < self.__board_w):
                 if self.board[i][j] == player_char: #if it's that player's piece, line gets bigger
                     line_length = line_length + 1
                     if line_length > longest_line_lenght:
@@ -96,9 +98,9 @@ class State:
         longest_line_lenght = 0
 
         #diagonals starting from the rightmost collumn
-        for row in range(self.board_h):
+        for row in range(self.__board_h):
             i = row
-            j = self.board_w-1
+            j = self.__board_w-1
             line_length = 0
 
             while (i >= 0 and j >= 0):
@@ -112,8 +114,8 @@ class State:
                 j = j-1
 
         #diagonals starting from the bottom row
-        for col in reversed(range(self.board_w-1)):
-            i = self.board_h-1
+        for col in reversed(range(self.__board_w-1)):
+            i = self.__board_h-1
             j = col
             line_length=0
 
@@ -132,28 +134,28 @@ class State:
     #returns number of pieces of a specified character
     def piece_count(self, player_char):
         count = 0
-        for i in range(self.board_h):
-            for j in range(self.board_w):
+        for i in range(self.__board_h):
+            for j in range(self.__board_w):
                 if self.board[i][j] == player_char:
                     count = count + 1
 
         return count
     
     #returns a list of collumns where it would be legal to place a piece
-    def legal_actions(self):
+    def legal_moves(self):
         moves = []
-        for j in range(self.board_w):
-            if self.board[0][j] == self.empty:
+        for j in range(self.__board_w):
+            if self.board[0][j] == self.__empty:
                 moves.append(j)
         return moves
     
     #returns a new state with a piece placed in that column, or None if the action is invalid
     def action(self, col, player_char):
-        if self.board[0][col] != self.empty:
+        if self.board[0][col] != self.__empty:
             return None
         row = 1
-        for row in range(1,self.board_h):
-            if self.board[row][col] != self.empty:
+        for row in range(1,self.__board_h):
+            if self.board[row][col] != self.__empty:
                 row = row - 1
                 break
 
@@ -161,3 +163,24 @@ class State:
         new_board[row][col] = player_char
 
         return State(new_board)
+
+    #returns None if state isn't terminal. If it is terminal, returns 1 if p1 wins, -1 if p2 wins, and 0 if its a tie
+    def is_terminal(self):
+        
+        if (self.longest_h_line(self.__p1_char) >= 4 or
+            self.longest_v_line(self.__p1_char) >= 4 or
+            self.longest_d_up_line(self.__p1_char) >= 4 or
+            self.longest_d_down_line(self.__p1_char) >=4):
+            return 1
+        
+        if (self.longest_h_line(self.__p2_char) >= 4 or
+            self.longest_v_line(self.__p2_char) >= 4 or
+            self.longest_d_up_line(self.__p2_char) >= 4 or
+            self.longest_d_down_line(self.__p2_char) >=4):
+            return -1
+        
+        #no legal moves left (board full), tie
+        if not self.legal_moves():
+            return 0
+        
+        return None
