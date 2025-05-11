@@ -6,8 +6,9 @@ class State:
     p1_char = 'X' #character that represents a piece by player 1
     p2_char = 'O' #character that represents a piece by player 1
 
-    def __init__(self, matrix):
+    def __init__(self, matrix, to_move: bool):
         self.board = matrix
+        self.to_move = to_move # True = p1 move, False = p2 move
 
     def print_board(self):
         for i in range(self.__board_h):
@@ -159,10 +160,15 @@ class State:
                 row = row - 1
                 break
 
+        if self.to_move:
+            player_char = self.p1_char
+        else:
+            player_char = self.p2_char
+
         new_board = list(map(list, self.board))
         new_board[row][col] = player_char
 
-        return State(new_board)
+        return State(new_board, not self.to_move)
 
     #returns None if state isn't terminal. If it is terminal, returns 1 if p1 wins, -1 if p2 wins, and 0 if its a tie
     def is_terminal(self):

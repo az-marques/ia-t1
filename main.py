@@ -8,7 +8,7 @@ def connect4_jogo():
              [' ',' ',' ',' ',' '],
              [' ',' ',' ',' ',' ']]
     
-    state = State(board)
+    state = State(board, True)
     player_to_move = 1
 
     while (not state.is_terminal()):
