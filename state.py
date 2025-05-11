@@ -151,7 +151,7 @@ class State:
         return moves
     
     #returns a new state with a piece placed in that column, or None if the action is invalid
-    def action(self, col, player_char):
+    def action(self, col):
         if self.board[0][col] != self.__empty:
             return None
         row = 1
