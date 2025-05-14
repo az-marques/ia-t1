@@ -132,6 +132,103 @@ class State:
 
         return longest_line_lenght
     
+    #returns the number of pieces of a specified character that aren't along an edge of the board
+    def center_pieces(self, player_char):
+        count = 0
+        for i in range(1,self.__board_h-1):
+            for j in range(1,self.__board_w-1):
+                if self.board[i][j] == player_char:
+                    count = count + 1
+        
+        return count
+    
+    #returns the amount and average length of lines (longer than just 1 character) of a specified character
+    def line_stats(self, player_char):
+        line_lenghts = []
+
+        #checking horizontals
+        for i in range(self.__board_h):
+            line_length = 0
+            for j in range(self.__board_w):
+                if self.board[i][j] == player_char: #if it's that player's piece, line gets bigger
+                    line_length = line_length + 1
+                elif line_length > 0: #otherwise the line is broken, store value and reset the count (if there is a value)
+                    line_lenghts.append(line_length)
+                    line_length = 0
+
+        #checking verticals
+        for j in range(self.__board_w):
+            line_length = 0
+            for i in range(self.__board_h):
+                if self.board[i][j] == player_char: #if it's that player's piece, line gets bigger
+                    line_length = line_length + 1
+                elif line_length > 0: #otherwise the line is broken, store value and reset the count (if there is a value)
+                    line_lenghts.append(line_length)
+                    line_length = 0
+        
+        #checking / diagonals
+        #diagonals starting from the leftmost collumn
+        for row in range(self.__board_h):
+            i = row
+            j = 0
+            line_length = 0
+            while (i >= 0 and j < self.__board_w):
+                if self.board[i][j] == player_char: #if it's that player's piece, line gets bigger
+                    line_length = line_length + 1
+                elif line_length > 0: #otherwise the line is broken, store value and reset the count (if there is a value)
+                    line_lenghts.append(line_length)
+                    line_length = 0
+                i = i-1
+                j = j+1
+        #diagonals starting from the bottom row
+        for col in range(1,self.__board_w):
+            i = self.__board_h-1
+            j = col
+            line_length = 0
+            while (i >= 0 and j < self.__board_w):
+                if self.board[i][j] == player_char: #if it's that player's piece, line gets bigger
+                    line_length = line_length + 1
+                elif line_length > 0: #otherwise the line is broken, store value and reset the count (if there is a value)
+                    line_lenghts.append(line_length)
+                    line_length = 0
+                i = i-1
+                j = j+1
+
+        #checking \ diagonals
+        #diagonals starting from the rightmost collumn
+        for row in range(self.__board_h):
+            i = row
+            j = self.__board_w-1
+            line_length = 0
+            while (i >= 0 and j >= 0):
+                if self.board[i][j] == player_char: #if it's that player's piece, line gets bigger
+                    line_length = line_length + 1
+                elif line_length > 0: #otherwise the line is broken, store value and reset the count (if there is a value)
+                    line_lenghts.append(line_length)
+                    line_length = 0
+                i = i-1
+                j = j-1
+        #diagonals starting from the bottom row
+        for col in reversed(range(self.__board_w-1)):
+            i = self.__board_h-1
+            j = col
+            line_length=0
+            while (i >= 0 and j >=0):
+                if self.board[i][j] == player_char: #if it's that player's piece, line gets bigger
+                    line_length = line_length + 1
+                elif line_length > 0: #otherwise the line is broken, store value and reset the count (if there is a value)
+                    line_lenghts.append(line_length)
+                    line_length = 0
+                i = i-1
+                j = j-1
+
+        line_lenghts = [i for i in line_lenghts if i != 1] #removes all "lines" of lenght 1
+        n_lines =  len(line_lenghts)
+        avg_line_length = 0
+        if n_lines != 0:
+            avg_line_length = sum(line_lenghts)/n_lines
+        return n_lines, avg_line_length
+    
     #returns number of pieces of a specified character
     def piece_count(self, player_char):
         count = 0
